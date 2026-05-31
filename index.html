@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blockshiel — Your Keys. Your Crypto.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --off-white: #f9f8f6;
+    --light: #f0ede8;
+    --mid: #e0dbd2;
+    --text-primary: #111111;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --accent: #1a1a1a;
+    --gold: #c49a3c;
+    --gold-light: #e8d5a0;
+    --border: #ddd9d0;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 2px;
+    --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--light); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+  /* ─── SELECTION ─── */
+  ::selection { background: var(--gold-light); color: var(--text-primary); }
+
+  /* ─── TYPOGRAPHY ─── */
+  h1,h2,h3,h4 { font-family: var(--serif); font-weight: 700; line-height: 1.1; color: var(--text-primary); }
+
+  /* ─── NAVBAR ─── */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 0 5vw;
+    height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: transparent;
+    transition: background var(--transition), border-bottom var(--transition), box-shadow var(--transition);
+  }
+  .navbar.scrolled {
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 24px rgba(0,0,0,0.05);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-secondary); text-decoration: none;
+    transition: color var(--transition);
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+  .nav-cta {
+    background: var(--accent); color: var(--white) !important;
+    padding: 10px 24px; border-radius: var(--radius);
+    font-size: 0.8rem !important; letter-spacing: 0.1em !important;
+    transition: background var(--transition) !important;
+  }
+  .nav-cta:hover { background: #333 !important; }
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px; cursor: pointer;
+    background: none; border: none; padding: 8px; z-index: 1001; position: relative;
+  }
+  .hamburger span { display: block; width: 24px; height: 1.5px; background: var(--text-primary); transition: var(--transition); }
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; background: var(--white); z-index: 1002;
+    flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+    padding: 40px 24px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: var(--serif); font-size: 2rem; color: var(--text-primary);
+    text-decoration: none; font-weight: 700;
+  }
+  .mobile-close {
+    position: absolute; top: 24px; right: 5vw;
+    background: none; border: none; font-size: 2.5rem; line-height: 1; cursor: pointer; color: var(--text-primary);
+    z-index: 1000;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 140px 5vw 80px;
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .hero::before { display: none; }
+  .hero-text { position: relative; z-index: 1; max-width: 700px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 2rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 32px; height: 1px; background: var(--gold);
+  }
+  .hero h1 {
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 1.0; letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7;
+    max-width: 480px; margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+  .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: var(--white);
+    padding: 16px 32px; border-radius: var(--radius);
+    font-family: var(--sans); font-size: 0.875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background var(--transition), transform var(--transition);
+  }
+  .btn-primary:hover { background: #2a2a2a; transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: var(--text-primary);
+    padding: 16px 32px; border-radius: var(--radius);
+    font-family: var(--sans); font-size: 0.875rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; border: 1px solid var(--border); cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .btn-secondary:hover { border-color: var(--accent); background: var(--off-white); }
+  .hero-trust {
+    display: flex; gap: 2rem; flex-wrap: wrap;
+    padding-top: 2rem; border-top: 1px solid var(--border);
+  }
+  .trust-item {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .trust-number {
+    font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--text-primary);
+  }
+  .trust-label {
+    font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .hero-visual { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; }
+  .device-mockup {
+    width: 100%; max-width: 360px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+    text-align: center;
+    position: relative;
+  }
+  .device-body {
+    width: 80px; height: 220px;
+    background: linear-gradient(160deg, #2a2a2a 0%, #111 60%, #1e1e1e 100%);
+    border-radius: 14px;
+    margin: 0 auto 24px;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .device-screen {
+    width: 56px; height: 36px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin: 16px auto 0;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .device-screen-inner {
+    font-family: monospace; font-size: 6px; color: #00ff88;
+    text-align: center; line-height: 1.4;
+  }
+  .device-connector {
+    width: 18px; height: 8px;
+    background: #555;
+    border-radius: 2px;
+    margin: 0 auto;
+    position: absolute;
+    bottom: -4px; left: 50%; transform: translateX(-50%);
+  }
+  .device-btn {
+    width: 8px; height: 8px;
+    background: #444;
+    border-radius: 50%;
+    position: absolute;
+    right: 12px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .device-btn.b1 { bottom: 60px; }
+  .device-btn.b2 { bottom: 44px; }
+  .device-label {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-family: monospace; font-size: 5px; color: rgba(196,154,60,0.8);
+    letter-spacing: 0.1em;
+  }
+  .device-tags {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  }
+  .device-tag {
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-muted); background: var(--light);
+    padding: 5px 12px; border-radius: 20px;
+  }
+
+  /* ─── SECTION BASE ─── */
+  .section { padding: 100px 5vw; }
+  .section-alt { background: var(--off-white); }
+  .section-dark { background: var(--accent); color: var(--white); }
+  .section-label {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem;
+  }
+  .section-label::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+  .section-title {
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    letter-spacing: -0.03em; margin-bottom: 1.5rem;
+  }
+  .section-subtitle {
+    font-size: 1rem; color: var(--text-secondary); max-width: 540px;
+    line-height: 1.75; font-weight: 300;
+  }
+  .section-header { margin-bottom: 4rem; }
+
+  /* ─── SPECS BAR ─── */
+  .specs-bar {
+    background: var(--off-white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0 5vw;
+    display: flex; overflow-x: auto; gap: 0;
+  }
+  .spec-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 28px 36px; border-right: 1px solid var(--border);
+    white-space: nowrap; flex: 1; min-width: 160px;
+  }
+  .spec-item:last-child { border-right: none; }
+  .spec-icon { font-size: 1.4rem; }
+  .spec-text { display: flex; flex-direction: column; gap: 2px; }
+  .spec-name { font-size: 0.85rem; font-weight: 500; color: var(--text-primary); }
+  .spec-sub { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.06em; }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  }
+  .how-step {
+    background: var(--white); padding: 48px 36px;
+    border: 1px solid var(--border); position: relative;
+    transition: box-shadow var(--transition);
+  }
+  .how-step:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.07); z-index: 1; }
+  .step-number {
+    font-family: var(--serif); font-size: 4rem; font-weight: 900;
+    color: var(--light); line-height: 1; margin-bottom: 1.5rem;
+    letter-spacing: -0.04em;
+  }
+  .step-title {
+    font-family: var(--serif); font-size: 1.25rem; font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .step-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; font-weight: 300; }
+
+  /* ─── FEATURES ─── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    border: 1px solid var(--border);
+  }
+  .feature-card {
+    padding: 44px 36px;
+    border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    transition: background var(--transition);
+    position: relative; overflow: hidden;
+  }
+  .feature-card:hover { background: var(--off-white); }
+  .feature-card:hover .feature-icon-wrap { transform: scale(1.05); }
+  .feature-icon-wrap {
+    width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--light); border-radius: 10px;
+    margin-bottom: 1.5rem;
+    transition: transform var(--transition);
+  }
+  .feature-title {
+    font-family: var(--serif); font-size: 1.15rem; font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .feature-text { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7; font-weight: 300; }
+
+  /* ─── SECURITY ─── */
+  .security-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+  }
+  .security-points { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2.5rem; }
+  .security-point {
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    padding: 1.5rem; background: var(--white);
+    border: 1px solid var(--border); border-radius: 4px;
+    transition: background var(--transition);
+  }
+  .security-point:hover { background: var(--light); }
+  .sec-icon {
+    flex-shrink: 0; width: 36px; height: 36px;
+    background: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sec-content h4 {
+    font-family: var(--sans); font-size: 0.9rem; font-weight: 500; color: var(--text-primary);
+    margin-bottom: 0.35rem;
+  }
+  .sec-content p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; font-weight: 300; }
+  .security-visual {
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .sec-stat {
+    padding: 2rem 2.5rem;
+    border: 1px solid var(--border); background: var(--white);
+    border-radius: 4px;
+  }
+  .sec-stat-number {
+    font-family: var(--serif); font-size: 2.5rem; font-weight: 700; color: var(--gold);
+    line-height: 1; margin-bottom: 4px;
+  }
+  .sec-stat-label { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.08em; font-weight: 300; }
+  .sec-badge {
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--border);
+    background: var(--off-white);
+    border-radius: 4px;
+    font-size: 0.85rem; color: var(--text-secondary); line-height: 1.7;
+    font-style: italic; font-family: var(--serif);
+  }
+
+  /* ─── COINS ─── */
+  .coins-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 1px;
+    background: var(--border); border: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+  .coin-item {
+    background: var(--white); padding: 24px 16px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    transition: background var(--transition);
+    cursor: default;
+  }
+  .coin-item:hover { background: var(--off-white); }
+  .coin-symbol {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 700;
+    font-family: var(--serif);
+  }
+  .coin-name { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em; color: var(--text-primary); text-align: center; }
+  .coin-ticker { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .coins-more {
+    background: var(--off-white);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  }
+  .coins-more-num {
+    font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--text-primary);
+  }
+  .coins-more-label { font-size: 0.7rem; color: var(--text-muted); text-align: center; letter-spacing: 0.06em; }
+
+  /* ─── MODELS ─── */
+  .models-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; }
+  .model-card {
+    background: var(--white); border: 1px solid var(--border);
+    padding: 48px 44px;
+    position: relative; transition: box-shadow var(--transition);
+  }
+  .model-card:hover { box-shadow: 0 12px 48px rgba(0,0,0,0.08); z-index: 1; }
+  .model-card.featured {
+    border-color: var(--accent); border-width: 2px;
+  }
+  .featured-badge {
+    position: absolute; top: -1px; right: 32px;
+    background: var(--accent); color: var(--white);
+    font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 14px;
+  }
+  .model-name {
+    font-family: var(--serif); font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem;
+  }
+  .model-price {
+    font-family: var(--serif); font-size: 2.8rem; font-weight: 700; color: var(--text-primary);
+    line-height: 1; margin-bottom: 2rem; letter-spacing: -0.03em;
+  }
+  .model-price sup { font-size: 1.2rem; vertical-align: top; margin-top: 0.5rem; }
+  .model-features { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2.5rem; }
+  .model-features li {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.875rem; color: var(--text-secondary);
+  }
+  .model-features li::before {
+    content: ''; width: 16px; height: 16px; border-radius: 50%;
+    background: var(--light); border: 1px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .model-features li.yes::before {
+    background: var(--text-primary); border-color: var(--text-primary);
+    background-image: url("data:image/svg+xml,%3Csvg width='8' height='6' viewBox='0 0 8 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3L3 5L7 1' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: center;
+  }
+  .btn-order-model {
+    width: 100%; padding: 16px; text-align: center;
+    background: var(--accent); color: var(--white);
+    border: none; cursor: pointer; border-radius: var(--radius);
+    font-family: var(--sans); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: background var(--transition);
+  }
+  .btn-order-model:hover { background: #333; }
+  .model-card:not(.featured) .btn-order-model {
+    background: transparent; color: var(--accent); border: 1px solid var(--border);
+  }
+  .model-card:not(.featured) .btn-order-model:hover { border-color: var(--accent); background: var(--off-white); }
+
+  /* ─── FAQ ─── */
+  .faq-list { max-width: 720px; }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .faq-q {
+    width: 100%; background: none; border: none; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.75rem 0; gap: 1rem; text-align: left;
+  }
+  .faq-q-text {
+    font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
+    color: var(--text-primary); line-height: 1.3;
+  }
+  .faq-icon {
+    flex-shrink: 0; width: 28px; height: 28px;
+    border: 1px solid var(--border); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: var(--text-muted); line-height: 1;
+    transition: transform var(--transition), background var(--transition);
+    font-family: var(--sans);
+  }
+  .faq-item.open .faq-icon {
+    transform: rotate(45deg);
+    background: var(--accent); border-color: var(--accent); color: var(--white);
+  }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .faq-item.open .faq-a { max-height: 300px; }
+  .faq-a-inner {
+    padding: 0 0 1.75rem;
+    font-size: 0.9rem; color: var(--text-secondary); line-height: 1.75; font-weight: 300;
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    padding: 100px 5vw;
+    background: var(--off-white);
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .cta-section .section-label { justify-content: center; }
+  .cta-section .section-label::before { content: none; }
+  .cta-section h2 { color: var(--text-primary); max-width: 640px; margin: 0 auto 1.5rem; }
+  .cta-section p { color: var(--text-secondary); margin: 0 auto 3rem; max-width: 480px; font-weight: 300; }
+  .cta-buttons { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .btn-gold {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: var(--white);
+    padding: 18px 40px; border-radius: var(--radius);
+    font-family: var(--sans); font-size: 0.875rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: background var(--transition), transform var(--transition);
+  }
+  .btn-gold:hover { background: #2a2a2a; transform: translateY(-1px); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; color: var(--text-primary);
+    padding: 18px 40px; border-radius: var(--radius);
+    font-family: var(--sans); font-size: 0.875rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none; border: 1px solid var(--border); cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+  }
+  .btn-ghost:hover { border-color: var(--accent); background: var(--white); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #0a0a0a; padding: 60px 5vw 40px;
+    color: rgba(255,255,255,0.45);
+  }
+  .footer-top {
+    display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem;
+    padding-bottom: 3rem; margin-bottom: 3rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .footer-brand { }
+  .footer-logo {
+    font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--white);
+    text-decoration: none; display: block; margin-bottom: 1rem;
+  }
+  .footer-tagline { font-size: 0.85rem; line-height: 1.65; max-width: 260px; font-weight: 300; }
+  .footer-col h5 {
+    font-family: var(--sans); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 1.25rem;
+  }
+  .footer-col a {
+    display: block; font-size: 0.85rem; color: rgba(255,255,255,0.4);
+    text-decoration: none; margin-bottom: 0.6rem;
+    transition: color var(--transition);
+  }
+  .footer-col a:hover { color: var(--white); }
+  .footer-disclaimer {
+    font-size: 0.7rem; line-height: 1.55;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 1.5rem;
+  }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    font-size: 0.78rem;
+  }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { color: rgba(255,255,255,0.35); text-decoration: none; font-size: 0.78rem; transition: color var(--transition); }
+  .footer-links a:hover { color: rgba(255,255,255,0.7); }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white); width: 100%; max-width: 560px;
+    max-height: 90vh; overflow-y: auto;
+    border-radius: 4px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.2);
+    animation: modalIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-head {
+    padding: 32px 36px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+  }
+  .modal-title { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; }
+  .modal-sub { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
+  .modal-close {
+    flex-shrink: 0; background: var(--light); border: none; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: var(--text-secondary);
+    transition: background var(--transition);
+  }
+  .modal-close:hover { background: var(--mid); }
+  .modal-body { padding: 28px 36px 36px; }
+  .modal-notice {
+    background: var(--off-white); border: 1px solid var(--border); border-radius: 4px;
+    padding: 14px 16px; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+  .modal-notice strong { color: var(--text-primary); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .form-group label {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 12px 14px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    font-family: var(--sans); font-size: 0.9rem; color: var(--text-primary);
+    background: var(--white);
+    transition: border-color var(--transition);
+    outline: none;
+    appearance: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent);
+  }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-submit {
+    width: 100%; padding: 16px;
+    background: var(--accent); color: var(--white);
+    border: none; border-radius: var(--radius); cursor: pointer;
+    font-family: var(--sans); font-size: 0.875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    transition: background var(--transition);
+    margin-top: 0.5rem;
+  }
+  .form-submit:hover { background: #2a2a2a; }
+  .success-msg {
+    display: none; text-align: center; padding: 2rem 0;
+  }
+  .success-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--off-white); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin: 0 auto 1rem;
+  }
+  .success-msg h3 { font-family: var(--serif); font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .success-msg p { font-size: 0.875rem; color: var(--text-secondary); }
+
+  /* long modals */
+  .modal-long { max-width: 700px; }
+  .modal-long-body { padding: 32px 36px; }
+  .modal-long-body h3 { font-family: var(--serif); font-size: 1.15rem; margin: 1.5rem 0 0.6rem; }
+  .modal-long-body h3:first-child { margin-top: 0; }
+  .modal-long-body p, .modal-long-body li { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.75; font-weight: 300; }
+  .modal-long-body ul { margin-left: 1.25rem; margin-top: 0.5rem; }
+  .modal-long-body li { margin-bottom: 0.35rem; }
+  .modal-long-body a { color: var(--accent); }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+
+  /* ─── FAQ LAYOUT ─── */
+  .faq-layout {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;
+  }
+  @media (max-width: 900px) {
+    .faq-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .nav-cta-desktop { display: none; }
+    .hamburger { display: flex !important; }
+    .hero { min-height: auto; padding: 100px 5vw 60px; }
+    .how-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .security-layout { grid-template-columns: 1fr; gap: 3rem; }
+    .models-grid { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .specs-bar { flex-wrap: wrap; }
+    .spec-item { flex: 0 0 50%; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .form-row { grid-template-columns: 1fr; }
+    .modal-head, .modal-body, .modal-long-body { padding-left: 24px; padding-right: 24px; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .hero-buttons { flex-direction: column; }
+    .btn-primary, .btn-secondary { justify-content: center; }
+    .spec-item { flex: 0 0 100%; }
+    .hero-trust { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─── -->
+<nav class="navbar" id="navbar">
+  <a href="#" class="nav-logo">Blockshiel</a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#coins">Coins</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#" class="nav-cta" onclick="openModal('order');return false;">Order Now</a></li>
+  </ul>
+  <button class="hamburger" onclick="openMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ─── MOBILE MENU ─── -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="closeMobileMenu()">×</button>
+  <a href="#features" onclick="closeMobileMenu()">Features</a>
+  <a href="#security" onclick="closeMobileMenu()">Security</a>
+  <a href="#coins" onclick="closeMobileMenu()">Coins</a>
+  <a href="#faq" onclick="closeMobileMenu()">FAQ</a>
+  <a href="#" onclick="closeMobileMenu(); openModal('order');">Order Now</a>
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="hero" id="home">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Hardware Wallet</div>
+    <h1>Your keys.<br><em>Your crypto.</em><br>Always.</h1>
+    <p class="hero-sub">
+      A pocket-sized vault that keeps your private keys completely offline. Every transaction is confirmed physically on-screen — nothing moves without you.
+    </p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="openModal('order')">Order Now &rarr;</button>
+      <a href="#features" class="btn-secondary">Learn More</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item">
+        <span class="trust-number">5 500+</span>
+        <span class="trust-label">Coins &amp; Tokens</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-number">SE</span>
+        <span class="trust-label">Secure Element</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-number">BT+C</span>
+        <span class="trust-label">Bluetooth &amp; USB-C</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-number">100%</span>
+        <span class="trust-label">Offline Storage</span>
+      </div>
+    </div>
+  </div></section>
+
+<!-- ─── SPECS BAR ─── -->
+<div class="specs-bar">
+  <div class="spec-item">
+    <span class="spec-icon">🪙</span>
+    <div class="spec-text"><span class="spec-name">5 500+ Assets</span><span class="spec-sub">Coins &amp; Tokens</span></div>
+  </div>
+  <div class="spec-item">
+    <span class="spec-icon">🔐</span>
+    <div class="spec-text"><span class="spec-name">Secure Element</span><span class="spec-sub">Certified Chip</span></div>
+  </div>
+  <div class="spec-item">
+    <span class="spec-icon">📶</span>
+    <div class="spec-text"><span class="spec-name">Bluetooth &amp; USB-C</span><span class="spec-sub">Dual Connectivity</span></div>
+  </div>
+  <div class="spec-item">
+    <span class="spec-icon">🔌</span>
+    <div class="spec-text"><span class="spec-name">Offline Storage</span><span class="spec-sub">Air-Gapped Keys</span></div>
+  </div>
+  <div class="spec-item">
+    <span class="spec-icon">🔑</span>
+    <div class="spec-text"><span class="spec-name">PIN Protected</span><span class="spec-sub">Self-Destruct Lock</span></div>
+  </div>
+</div>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section class="section" id="how">
+  <div class="section-header reveal">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Three steps to<br>sovereign ownership</h2>
+    <p class="section-subtitle">No accounts. No cloud. No trust required — the device handles everything on-chip.</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-step reveal reveal-delay-1">
+      <div class="step-number">01</div>
+      <h3 class="step-title">Device arrives blank</h3>
+      <p class="step-text">Your Blockshiel ships completely factory-fresh with no pre-loaded keys. You generate your 24-word seed phrase directly on-device during first setup — it never leaves the chip, not even for a millisecond.</p>
+    </div>
+    <div class="how-step reveal reveal-delay-2">
+      <div class="step-number">02</div>
+      <h3 class="step-title">Connect your app</h3>
+      <p class="step-text">Install the companion app on your phone or desktop. Pair via USB-C or Bluetooth. Your wallet becomes accessible — but keys stay on the hardware at all times.</p>
+    </div>
+    <div class="how-step reveal reveal-delay-3">
+      <div class="step-number">03</div>
+      <h3 class="step-title">Approve physically</h3>
+      <p class="step-text">Every single transaction must be verified and confirmed using the two physical buttons on the device. The amount and recipient appear on-screen. Nothing moves without your press.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="section section-alt" id="features">
+  <div class="section-header reveal">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">Built for those who<br>take ownership seriously</h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h3 class="feature-title">Offline Key Storage</h3>
+      <p class="feature-text">Private keys are generated and stored exclusively on the certified chip. They never touch the internet, never leave the device — not during setup, not during use.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-2">
+      <div class="feature-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <h3 class="feature-title">Physical Confirmation</h3>
+      <p class="feature-text">Two physical buttons on the device. Every transaction details appear on the screen. You press to confirm — or press to reject. No software can override this.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-3">
+      <div class="feature-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3 class="feature-title">Secure Element Chip</h3>
+      <p class="feature-text">A certified tamper-resistant chip — the same technology used in passports and bank cards — protects your keys from physical extraction and side-channel attacks.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-1">
+      <div class="feature-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+      </div>
+      <h3 class="feature-title">Bluetooth &amp; USB-C</h3>
+      <p class="feature-text">Manage your portfolio on the go via Bluetooth mobile app, or use USB-C for desktop. One device works seamlessly with all your screens.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-2">
+      <div class="feature-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <h3 class="feature-title">5 500+ Supported Assets</h3>
+      <p class="feature-text">Bitcoin, Ethereum, Solana, and thousands of ERC-20, BEP-20 tokens, NFTs and more. One device for your entire portfolio.</p>
+    </div>
+    <div class="feature-card reveal reveal-delay-3">
+      <div class="feature-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </div>
+      <h3 class="feature-title">Recovery Phrase Backup</h3>
+      <p class="feature-text">Your 24-word seed phrase gives you full wallet recovery on any compatible device. Write it on paper, store it safely — it's your ultimate insurance.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECURITY ─── -->
+<section class="section section-alt" id="security">
+  <div class="security-layout">
+    <div>
+      <div class="section-label reveal">Security</div>
+      <h2 class="section-title reveal">We designed it so<br>we can't touch your keys</h2>
+      <div class="security-points">
+        <div class="security-point reveal reveal-delay-1">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c49a3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="sec-content">
+            <h4>Ships factory-blank</h4>
+            <p>Your device arrives with zero keys, zero data. The first boot is your first — and only — setup.</p>
+          </div>
+        </div>
+        <div class="security-point reveal reveal-delay-2">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c49a3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="sec-content">
+            <h4>Seed phrase stays on-chip</h4>
+            <p>Generated entirely on-device during first setup. Never transmitted. Never stored by us. Mathematically inaccessible.</p>
+          </div>
+        </div>
+        <div class="security-point reveal reveal-delay-3">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c49a3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="sec-content">
+            <h4>Transactions signed inside</h4>
+            <p>Signing happens entirely inside the secure element. Only the signed transaction leaves — private key never does.</p>
+          </div>
+        </div>
+        <div class="security-point reveal reveal-delay-4">
+          <div class="sec-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c49a3c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="sec-content">
+            <h4>PIN lock &amp; wipe</h4>
+            <p>Wrong PIN entered too many times triggers a full factory wipe. Your keys cannot be brute-forced.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="security-visual reveal">
+      <div class="sec-stat">
+        <div class="sec-stat-number">0</div>
+        <div class="sec-stat-label">Customer keys we have ever seen</div>
+      </div>
+      <div class="sec-stat">
+        <div class="sec-stat-number">24</div>
+        <div class="sec-stat-label">Word seed phrase — generated only on your device</div>
+      </div>
+      <div class="sec-stat">
+        <div class="sec-stat-number">∞</div>
+        <div class="sec-stat-label">Offline time — keys never need the internet</div>
+      </div>
+      <div class="sec-badge">
+        "The device is simply a signing machine. All key material lives inside the certified chip and is physically incapable of leaving it."
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COINS ─── -->
+<section class="section" id="coins">
+  <div class="section-header reveal">
+    <div class="section-label">Supported Assets</div>
+    <h2 class="section-title">One device.<br>Every major chain.</h2>
+    <p class="section-subtitle">All leading blockchains and their ecosystems — held securely in one pocket-sized device.</p>
+  </div>
+  <div class="coins-grid">
+    <div class="coin-item reveal">
+      <div class="coin-symbol" style="background:#f7931a15;color:#f7931a;">₿</div>
+      <span class="coin-name">Bitcoin</span>
+      <span class="coin-ticker">BTC</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-1">
+      <div class="coin-symbol" style="background:#627eea15;color:#627eea;">Ξ</div>
+      <span class="coin-name">Ethereum</span>
+      <span class="coin-ticker">ETH</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-2">
+      <div class="coin-symbol" style="background:#9945ff15;color:#9945ff;">◎</div>
+      <span class="coin-name">Solana</span>
+      <span class="coin-ticker">SOL</span>
+    </div>
+    <div class="coin-item reveal">
+      <div class="coin-symbol" style="background:#f3ba2f15;color:#f3ba2f;">B</div>
+      <span class="coin-name">BNB</span>
+      <span class="coin-ticker">BNB</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-1">
+      <div class="coin-symbol" style="background:#00aae415;color:#00aae4;">✕</div>
+      <span class="coin-name">XRP</span>
+      <span class="coin-ticker">XRP</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-2">
+      <div class="coin-symbol" style="background:#0033ad15;color:#0033ad;">₳</div>
+      <span class="coin-name">Cardano</span>
+      <span class="coin-ticker">ADA</span>
+    </div>
+    <div class="coin-item reveal">
+      <div class="coin-symbol" style="background:#e8414215;color:#e84142;">▲</div>
+      <span class="coin-name">Avalanche</span>
+      <span class="coin-ticker">AVAX</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-1">
+      <div class="coin-symbol" style="background:#8247e515;color:#8247e5;">⬡</div>
+      <span class="coin-name">Polygon</span>
+      <span class="coin-ticker">POL</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-2">
+      <div class="coin-symbol" style="background:#c2a63315;color:#c2a633;">Ð</div>
+      <span class="coin-name">Dogecoin</span>
+      <span class="coin-ticker">DOGE</span>
+    </div>
+    <div class="coin-item reveal">
+      <div class="coin-symbol" style="background:#bfbbbb15;color:#888;">Ł</div>
+      <span class="coin-name">Litecoin</span>
+      <span class="coin-ticker">LTC</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-1">
+      <div class="coin-symbol" style="background:#e6007a15;color:#e6007a;">●</div>
+      <span class="coin-name">Polkadot</span>
+      <span class="coin-ticker">DOT</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-2">
+      <div class="coin-symbol" style="background:#2e3148;color:#7b8cde;">⚛</div>
+      <span class="coin-name">Cosmos</span>
+      <span class="coin-ticker">ATOM</span>
+    </div>
+    <div class="coin-item reveal">
+      <div class="coin-symbol" style="background:#2775ca15;color:#2775ca;">$</div>
+      <span class="coin-name">USD Coin</span>
+      <span class="coin-ticker">USDC</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-1">
+      <div class="coin-symbol" style="background:#26a17b15;color:#26a17b;">₮</div>
+      <span class="coin-name">Tether</span>
+      <span class="coin-ticker">USDT</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-2">
+      <div class="coin-symbol" style="background:#e8411215;color:#e84112;">🔗</div>
+      <span class="coin-name">Chainlink</span>
+      <span class="coin-ticker">LINK</span>
+    </div>
+    <div class="coin-item reveal">
+      <div class="coin-symbol" style="background:#16213e15;color:#627eea;">Ξ2</div>
+      <span class="coin-name">Uniswap</span>
+      <span class="coin-ticker">UNI</span>
+    </div>
+    <div class="coin-item reveal reveal-delay-1">
+      <div class="coin-symbol" style="background:#ff6b3515;color:#ff6b35;">Ø</div>
+      <span class="coin-name">Aptos</span>
+      <span class="coin-ticker">APT</span>
+    </div>
+    <div class="coin-item coins-more reveal">
+      <div class="coins-more-num">+5 500</div>
+      <div class="coins-more-label">more tokens<br>&amp; NFTs</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MODELS ─── -->
+<section class="section section-alt" id="models">
+  <div class="section-header reveal">
+    <div class="section-label">Models &amp; Pricing</div>
+    <h2 class="section-title">Our device</h2>
+    <p class="section-subtitle">Both models ship with the same security core. The Pro adds advanced connectivity and premium finishing.</p>
+  </div>
+  <div style="display:flex;justify-content:center;margin-top:3rem;">
+    <div class="model-card featured" style="max-width:480px;width:100%;">
+      <div class="featured-badge">Hardware Wallet</div>
+      <div class="model-name">Blockshiel</div>
+      <div class="model-price"><sup>$</sup>69</div>
+      <ul class="model-features">
+        <li class="yes">5 500+ coins &amp; tokens</li>
+        <li class="yes">Secure Element chip</li>
+        <li class="yes">USB-C connectivity</li>
+        <li class="yes">Bluetooth 5.0</li>
+        <li class="yes">PIN protection &amp; wipe</li>
+        <li class="yes">24-word seed phrase</li>
+        <li class="yes">Premium anodised finish</li>
+      </ul>
+      <button class="btn-order-model" onclick="openModal('order','Blockshiel')">Order Now &rarr;</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section class="section" id="faq">
+  <div class="faq-layout">
+    <div class="reveal">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common<br>questions</h2>
+      <p class="section-subtitle" style="margin-top:1rem;">Still have a question? <a href="#" onclick="openModal('contact');return false;" style="color:var(--text-primary);font-weight:500;">Contact us</a> and we'll get back to you within one business day.</p>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">What happens if I lose or break the device?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Your 24-word seed phrase is all you need. Write it down when you first set up the device, store it somewhere safe (ideally offline and in two locations). With that phrase you can restore your full wallet on any compatible hardware wallet in minutes — your crypto is always yours, not tied to any device.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Does the device come with keys already loaded?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Never. Every Blockshiel ships completely blank — factory-fresh with zero pre-loaded data. You generate your seed phrase yourself during first setup, directly on-device. We have no access to your keys at any stage, before, during, or after delivery.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Do I need internet to store my crypto?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">No. Your private keys live on the chip, fully offline, always. You only need a connection to broadcast a transaction — but even then, signing happens on the device before anything goes online. Storing crypto requires zero internet access.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">How are transactions confirmed?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Every transaction is displayed on the device's screen — including the exact amount and destination address. You must press one of the two physical buttons to confirm. No software, malware, or remote actor can approve a transaction without your physical interaction.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">What is a seed phrase and where should I store it?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">A seed phrase is 24 random words that represent your entire wallet. It's generated once, during first setup. Write it on the included card in the exact order shown. Store it offline — never photograph it, never type it into any app or website. Consider a second physical copy stored in a separate safe location.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span class="faq-q-text">Are NFTs supported?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Yes. Blockshiel supports NFTs across major chains including Ethereum (ERC-721, ERC-1155), Solana, and others. Manage and transfer NFTs from the companion app while all approvals are confirmed physically on the device.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section" id="order-cta">
+  <div class="section-label reveal">Get Started</div>
+  <h2 class="section-title reveal">Take full ownership<br>of your digital assets</h2>
+  <p class="reveal" style="color:var(--text-secondary);margin:0 auto 2.5rem;max-width:480px;font-weight:300;">Join thousands who no longer trust exchanges with their crypto. Your keys. Your coins. Your Blockshiel.</p>
+  <div class="cta-buttons reveal">
+    <button class="btn-gold" onclick="openModal('order')">Order Now &rarr;</button>
+    <button class="btn-ghost" onclick="openModal('contact')">Contact Us</button>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="footer-logo">Blockshiel</a>
+      <p class="footer-tagline">Your keys. Your crypto. Always.<br>A hardware wallet built for true ownership.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Navigation</h5>
+      <a href="#features">Features</a>
+      <a href="#security">Security</a>
+      <a href="#coins">Supported Coins</a>
+      <a href="#models">Models &amp; Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <a href="mailto:complience@blockshiel.pro">complience@blockshiel.pro</a>
+      <a href="tel:+48223001234">+48 22 300 12 34</a>
+      <a href="#">al. Jana Pawła II 22</a>
+      <a href="#">00-133 Warszawa, Poland</a>
+    </div>
+  </div>
+  <div class="footer-disclaimer">Devices ship blank. Keys generated on-device — we never see them. Not an exchange. Crypto carries risk.</div>
+  <div class="footer-bottom">
+    <span>© 2025 Blockshiel. All rights reserved. | Chmielna 71, 00-801 Warszawa, Poland</span>
+    <div class="footer-links">
+      <a href="#" onclick="openModal('privacy');return false;">Privacy Policy</a>
+      <a href="#" onclick="openModal('terms');return false;">Terms &amp; Conditions</a>
+      <a href="#" onclick="openModal('returns');return false;">Returns &amp; Cancellation</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════ MODALS ═══════ -->
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="modal-order" onclick="handleOverlayClick(event,'order')">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Order Request</div>
+        <div class="modal-sub">We'll confirm within 1 business day</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('order')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-notice"><strong>No payment is taken now.</strong> We will contact you within 1 business day to confirm your order and arrange payment.</div>
+      <div id="order-form-wrap">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" id="o-fname" placeholder="Jan" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" id="o-lname" placeholder="Kowalski" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" id="o-email" placeholder="jan@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Delivery Address *</label>
+          <input type="text" id="o-address" placeholder="Street & house number" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="o-city" placeholder="Warsaw" required>
+          </div>
+          <div class="form-group">
+            <label>Postcode *</label>
+            <input type="text" id="o-postcode" placeholder="00-001" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Country *</label>
+          <input type="text" id="o-country" placeholder="Poland" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Model *</label>
+            <select id="o-model"><option value="Blockshiel">Blockshiel — $69</option></select>
+          </div>
+          <div class="form-group">
+            <label>Quantity *</label>
+            <select id="o-qty">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+        <button class="form-submit" onclick="submitOrder()">Submit Order Request</button>
+      </div>
+      <div class="success-msg" id="order-success">
+        <div class="success-icon">✓</div>
+        <h3>Request received!</h3>
+        <p>Thank you. We'll contact you at your email address within 1 business day to confirm your order and arrange payment.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="modal-contact" onclick="handleOverlayClick(event,'contact')">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Get in Touch</div>
+        <div class="modal-sub">We'll reply within 1 business day</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('contact')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="contact-form-wrap">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name *</label>
+            <input type="text" id="c-name" placeholder="Your name" required>
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="c-email" placeholder="your@email.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Company (optional)</label>
+          <input type="text" id="c-company" placeholder="Company name">
+        </div>
+        <div class="form-group">
+          <label>Subject *</label>
+          <input type="text" id="c-subject" placeholder="What's this about?" required>
+        </div>
+        <div class="form-group">
+          <label>Message *</label>
+          <textarea id="c-message" placeholder="Your message…" required></textarea>
+        </div>
+        <button class="form-submit" onclick="submitContact()">Send Message</button>
+      </div>
+      <div class="success-msg" id="contact-success">
+        <div class="success-icon">✓</div>
+        <h3>Message sent!</h3>
+        <p>Thanks for reaching out. We'll reply to your email within 1 business day.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div class="modal-overlay" id="modal-privacy" onclick="handleOverlayClick(event,'privacy')">
+  <div class="modal modal-long">
+    <div class="modal-head">
+      <div class="modal-title">Privacy Policy</div>
+      <button class="modal-close" onclick="closeModal('privacy')">×</button>
+    </div>
+    <div class="modal-long-body">
+      <h3>1. Controller</h3>
+      <p>Blockshiel, Chmielna 71, 00-801 Warszawa, Poland ("we", "us", "our") is the data controller for personal data collected via this website. Contact: compliance@blockshiel.pro.</p>
+      <h3>2. Data We Collect</h3>
+      <p>We collect only the data you provide voluntarily: name, email address, delivery address, and order details submitted via the order request form or contact form. We do not use tracking cookies, analytics scripts, or advertising pixels.</p>
+      <h3>3. Purpose and Legal Basis</h3>
+      <p>Your data is processed solely to respond to your enquiry and process your order request. Legal basis: Art. 6(1)(b) GDPR (performance of a contract / pre-contractual measures) and Art. 6(1)(f) GDPR (legitimate interest in responding to communications).</p>
+      <h3>4. Retention</h3>
+      <p>Order and contact data is retained for 5 years after the last interaction for legal and accounting purposes, then securely deleted.</p>
+      <h3>5. Your Rights</h3>
+      <p>Under GDPR you have the right to access, rectify, erase, restrict, or port your data, and to object to processing. To exercise any right, contact compliance@blockshiel.pro. You also have the right to lodge a complaint with the Polish Data Protection Authority (UODO), ul. Stawki 2, 00-193 Warsaw.</p>
+      <h3>6. Data Sharing</h3>
+      <p>We do not sell or share your personal data with third parties except where required by law or as necessary to fulfil your delivery (courier partner). All processors operate under GDPR-compliant data processing agreements.</p>
+      <h3>7. Security</h3>
+      <p>We implement appropriate technical and organisational measures to protect your data. Form submissions are transmitted over encrypted HTTPS connections.</p>
+      <h3>8. No Seed Phrase Data</h3>
+      <p>We never collect, process, or store any seed phrase, private key, or wallet data of any kind. This is technically impossible — your device generates all cryptographic material locally and offline.</p>
+      <h3>9. Changes</h3>
+      <p>We may update this policy. The current version is always available at blockshiel.pro/privacy.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS MODAL -->
+<div class="modal-overlay" id="modal-terms" onclick="handleOverlayClick(event,'terms')">
+  <div class="modal modal-long">
+    <div class="modal-head">
+      <div class="modal-title">Terms &amp; Conditions</div>
+      <button class="modal-close" onclick="closeModal('terms')">×</button>
+    </div>
+    <div class="modal-long-body">
+      <h3>1. Seller</h3>
+      <p>Blockshiel, Chmielna 71, 00-801 Warszawa, Poland. Email: compliance@blockshiel.pro. Tel: +48 111 000 222.</p>
+      <h3>2. Non-Binding Order Requests</h3>
+      <p>Order requests submitted via this website are <strong>non-binding enquiries only</strong> and do not constitute a legally binding contract. A contract of sale is formed only when the seller confirms the order in writing (by email). No payment is taken at the time of order request submission.</p>
+      <h3>3. Prices</h3>
+      <p>Prices are shown in EUR including applicable VAT. Delivery costs are communicated upon order confirmation and depend on destination. We reserve the right to adjust prices at any time prior to written order confirmation.</p>
+      <h3>4. Delivery</h3>
+      <p>Estimated delivery times are provided at order confirmation. We ship to EU/EEA countries. Risk passes to the buyer upon handover to the courier.</p>
+      <h3>5. Governing Law</h3>
+      <p>These Terms are governed by Polish law. For consumer disputes, the EU Online Dispute Resolution platform is available at <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.</p>
+      <h3>6. Warranty</h3>
+      <p>Hardware defects are covered by a 24-month statutory warranty. The warranty does not cover damage resulting from misuse, physical damage, or unauthorised modification.</p>
+      <h3>7. Disclaimer</h3>
+      <p>Blockshiel is a hardware device. We are not an exchange, broker, or financial adviser. We provide no investment advice and accept no liability for any loss of cryptocurrency assets resulting from loss of seed phrase, misuse of the device, or user error.</p>
+      <h3>8. Contact for Disputes</h3>
+      <p>Please contact us at compliance@blockshiel.pro before initiating any formal dispute procedure.</p>
+    </div>
+  </div>
+</div>
+
+<!-- RETURNS MODAL -->
+<div class="modal-overlay" id="modal-returns" onclick="handleOverlayClick(event,'returns')">
+  <div class="modal modal-long">
+    <div class="modal-head">
+      <div class="modal-title">Returns &amp; Cancellation</div>
+      <button class="modal-close" onclick="closeModal('returns')">×</button>
+    </div>
+    <div class="modal-long-body">
+      <h3>1. Right of Withdrawal</h3>
+      <p>As a consumer purchasing within the European Union, you have the right to withdraw from your purchase within <strong>14 calendar days</strong> of receiving your order, without giving any reason, pursuant to the EU Consumer Rights Directive (2011/83/EU).</p>
+      <h3>2. Conditions for Return</h3>
+      <ul>
+        <li>The device must be returned in its <strong>original, unopened packaging</strong>.</li>
+        <li>The device must <strong>not have been activated</strong> (i.e. the first-setup seed-generation process must not have been started).</li>
+        <li>All original accessories and documentation must be included.</li>
+      </ul>
+      <h3>3. How to Return</h3>
+      <p>Email compliance@blockshiel.pro within the 14-day window with your order reference and intent to return. We will provide return instructions and a return address. Return shipping costs are borne by the buyer unless the item is defective.</p>
+      <h3>4. Refund</h3>
+      <p>Upon receipt and inspection of the returned device, we will process a full refund to the original payment method within 14 days. We may withhold the refund until we have received the goods or evidence of their dispatch.</p>
+      <h3>5. Exceptions</h3>
+      <p>The right of withdrawal does not apply to devices that have been activated (sealed packaging broken and first setup completed), as the device becomes personalised to your cryptographic keys at that point.</p>
+      <h3>6. Defective Goods</h3>
+      <p>If you receive a defective device, contact compliance@blockshiel.pro immediately. We will arrange collection and replacement at no cost to you under the 24-month statutory warranty.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── NAVBAR SCROLL ───
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ─── MOBILE MENU ───
+function openMobileMenu() {
+  document.getElementById('mobileMenu').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ─── MODALS ───
+function openModal(id, model) {
+  document.getElementById('modal-' + id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (id === 'order' && model) {
+    const sel = document.getElementById('o-model');
+    if (sel) {
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === model) { sel.selectedIndex = i; break; }
+      }
+    }
+  }
+}
+function closeModal(id) {
+  document.getElementById('modal-' + id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e, id) {
+  if (e.target === e.currentTarget) closeModal(id);
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
+});
+
+// ─── FORM SUBMITS ───
+function submitOrder() {
+  const req = ['o-fname','o-lname','o-email','o-address','o-city','o-postcode','o-country'];
+  for (const id of req) {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.focus(); el.style.borderColor='#c0392b'; setTimeout(()=>el.style.borderColor='',1500); return; }
+  }
+  document.getElementById('order-form-wrap').style.display = 'none';
+  document.getElementById('order-success').style.display = 'block';
+}
+function submitContact() {
+  const req = ['c-name','c-email','c-subject','c-message'];
+  for (const id of req) {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) { el.focus(); el.style.borderColor='#c0392b'; setTimeout(()=>el.style.borderColor='',1500); return; }
+  }
+  document.getElementById('contact-form-wrap').style.display = 'none';
+  document.getElementById('contact-success').style.display = 'block';
+}
+
+// ─── FAQ ACCORDION ───
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ─── SCROLL REVEAL ───
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ─── DEVICE SCREEN BLINK ───
+const screenTexts = [
+  'Send BTC?\n0.0142\n✓ ✗',
+  'Receive ETH\n0.5000\n✓ ✗',
+  'Balance\n$12,847\n———',
+  'PIN OK\nWelcome\nBlockshiel',
+  'Sign TX?\nConfirm\n✓ ✗',
+];
+let screenIdx = 0;
+const screenEl = document.querySelector('.device-screen-inner');
+if (screenEl) {
+  setInterval(() => {
+    screenIdx = (screenIdx + 1) % screenTexts.length;
+    screenEl.style.opacity = '0';
+    setTimeout(() => {
+      screenEl.innerHTML = screenTexts[screenIdx].replace(/\n/g, '<br>');
+      screenEl.style.opacity = '1';
+    }, 300);
+    screenEl.style.transition = 'opacity 0.3s';
+  }, 3000);
+}
+</script>
+</body>
+</html>
